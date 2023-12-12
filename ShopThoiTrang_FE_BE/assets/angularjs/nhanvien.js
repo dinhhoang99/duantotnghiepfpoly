@@ -62,7 +62,7 @@ window.NhanVienController = function ($scope, $http, $location, $routeParams) {
         var idRole = document.getElementById("vaitro").value;
         var MainImage = document.getElementById("fileUpload").files;
             if (MainImage.length == 0){
-                Swal.fire('Vui lòng thêm ảnh đại diện cho sản phẩm !', '', 'error');
+                Swal.fire('Vui lòng thêm ảnh đại diện cho Nhân viên !', '', 'error');
                 return;
             }
         var img = new FormData();
@@ -97,7 +97,7 @@ window.NhanVienController = function ($scope, $http, $location, $routeParams) {
                 }
     
             })
-    })
+        })
     }
     //update 
     $scope.update = function () {

@@ -81,7 +81,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="6" class="text-right">Tổng tiền cần thanh toán</td>
-                                        <td>{{tienThanhToan | currency:'':0}} VNĐ</td>
+                                        <td id="totalPrice" >{{tienThanhToan | currency:'':0}} VNĐ</td> 
                                     </tr>
                                 </tfoot>
                             </table>
@@ -93,13 +93,13 @@
                        
                         <div id="coupon" class="coupon-dec tab-pane active">
         
-                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == false && voucherType === true">{{voucherName}} | Giảm {{discountVoucher}} áp dụng trên trên hóa đơn  (- {{voucherGiamGia | currency:'':0}} VNĐ)
+                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == false && voucherType === true && voucher !== ' '">{{voucherName}} | Giảm {{discountVoucher}} áp dụng trên trên hóa đơn  (- {{giamGia | currency:'':0}} VNĐ)
                                 <button ng-click="removeVoucher()" style="color: rgb(247, 3, 3);border: none;"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
-                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == false && voucherType === false">{{voucherName}} | Giảm {{cashVoucher}} áp dụng trên hóa đơn  (- {{voucherGiamGia | currency:'':0}} VNĐ)
+                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == false && voucherType === false && voucher !== ' '">{{voucherName}} | Giảm {{cashVoucher}} áp dụng trên hóa đơn  (- {{giamGia | currency:'':0}} VNĐ)
                                 <button ng-click="removeVoucher()" style="color: rgb(247, 3, 3);border: none;"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
-                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == true && voucherType === true">{{voucherName}} | Giảm {{discountVoucher}} áp dụng trên trên sản phẩm  (- {{voucherGiamGia | currency:'':0}} VNĐ)
+                            <div id="voucher" ng-if="checkVoucher == true && voucherIs == true && voucherType === true && voucher !== ' '   ">{{voucherName}} | Giảm {{discountVoucher}} áp dụng trên trên sản phẩm  (- {{voucherGiamGia | currency:'':0}} VNĐ)
                                 <button ng-click="removeVoucher()" style="color: rgb(247, 3, 3);border: none;"><i class="fa-solid fa-trash-can"></i></button>
                               
                                 <div>Áp dụng cho sản phẩm : </div>
@@ -114,15 +114,20 @@
                                     - [{{sp.productDetail.product.name}} - SKU : {{sp.productDetail.product.code}}]
                                 </div>
                             </div>
-
+  
                             <div id="voucher1"  ng-if="checkCoupon == true && couponType == true">{{couponName}} | Giảm {{discountCoupon}} trên hóa đơn (- {{couponGiamGia | currency:'':0}} VNĐ)
                                 <button ng-click="removeCoupon()" style="color: rgb(247, 3, 3);border: none;"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                             <div id="voucher1"  ng-if="checkCoupon == true && couponType == false">{{couponName}} | Giảm {{cashCoupon}} trên hóa đơn (- {{couponGiamGia | currency:'':0}} VNĐ)
                                 <button ng-click="removeCoupon()" style="color: rgb(247, 3, 3);border: none;"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
-                            <input id="coupon-code" required="" type="text" class="mb-3" placeholder="Áp mã giảm giá (nếu có)">
-                            <button ng-click="apMa()" class="coupon-btn btn" type="submit"><i class="fa-solid fa-gift"></i> Áp Mã Giảm Giá</button>
+                            <!-- <input id="coupon-code" required="" type="text" class="mb-3" placeholder="Áp mã giảm giá (nếu có)">
+                            <button ng-click="apMa()" class="coupon-btn btn" type="submit"><i class="fa-solid fa-gift"></i> Áp Mã Giảm Giá</button><div id="chuongtrinhkhuyenmai" style="display: block;"> -->
+                           <hr>
+                            <select  class="input-group-text" style="width: 230px;height: 40px; float: left;" id="ctkm" >
+                                <option ng-repeat="km in listVoucher" value="{{km.code}}">{{km.code}} - {{km.name}} | Áp dụng cho {{km.typeVoucher != true ? 'Sản phẩm' : 'Hóa đơn'}}  </option>
+                            </select>
+                            <button  style="padding: 8px; margin-left: 8px;" class="btn btn-dark" ng-click="apMa()">Áp dụng</button>
                         </div>
                     </div>
                   
@@ -143,7 +148,10 @@
                                     </label>
                     
                                    <select id="idAddress" ng-click="changeAddress()" >
-                                    <option ng-repeat="add in listAddress" value="{{add.id}}">{{add.fullname}} - {{add.phone}} | {{add.address}}, {{add.wardName}}, {{add.districtName}}, {{add.cityName}}</option>
+                                    <option ng-repeat="add in listAddress" value="{{add.id}}">{{add.fullname}} - {{add.phone}} | {{add.address}}, {{add.wardName}}, {{add.districtName}}, {{add.cityName}} 
+                                        
+                                    </option>
+                                    <button ng-click="" style="color: rgb(247, 3, 3);"><i class="fa-solid fa-trash-can"></i></button>
                                    </select>
                                    <button ng-click="themDiaChi()" style="float: right;"><i class="fa-solid fa-plus"></i> Thêm địa chỉ mới</button>
                                 </div>
@@ -420,11 +428,11 @@
       <div class="row">
         <div class="col-md-12 ">
           <label>Tên người nhận <span class="vaid">*</span></label> <input class="haninput" id="tennguoimua">
-       
+          <span style="color: red;">{{ errorName }}</span>
         </div>
-        <div class="col-md-12 ">
+            <div class="col-md-12 ">
             <label>SĐT người nhận <span class="vaid">*</span></label> <input class="haninput" id="sodienthoai">
-           
+            <span style="color: red;">{{ errorPhone }}</span>
           </div>
           <div class="col-md-12 ">
             <label>Tỉnh/Thành <span class="vaid">*</span></label>  <select class="form-control" id="tinh" ng-click="getHuyen();getXa()">
@@ -444,7 +452,7 @@
           </div>
         <div class="col-md-12 ">
           <label>Địa chỉ cụ thể </label> <textarea class="haninput1" id="diachicuthe"></textarea>
-         
+          <span style="color: red;">{{ errorDetailAddress    }}</span>
         </div>
    <div style="padding-top: 10px;">
     <button class="btn btn-primary" ng-click="themDiaChi()">X</button>

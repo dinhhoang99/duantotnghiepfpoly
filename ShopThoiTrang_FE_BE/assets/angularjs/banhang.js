@@ -318,8 +318,8 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
   // thêm giỏ hàng
   let idPro = null;
   $scope.themvaogio = function (id) {
-
     $http.get("http://localhost:8080/api/productdetail_color_size/getbyid/" + id).then(function (resp) {
+      
       $http.get("http://localhost:8080/api/product/" + resp.data.idProductDetail).then(function (pro) {
 
         if (resp.data.quantity == 0) {
@@ -1528,11 +1528,7 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
           $scope.tinhPhiShip();
           document.getElementById('code-coupon').value = '';
           $scope.tienThanhToan = $scope.tongTien + $scope.phiShip - ($scope.couponGiamGia + $scope.voucherGiamGia);
-
-
-
         }
-
 
       }
       if ($scope.tongTien < $scope.giamGia) {
@@ -1593,12 +1589,6 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
             checkCode = {
               code: code
             }
-
-
-
-
-
-
             $scope.checkVoucher = true;
             idVoucher = $scope.listVoucher[i].id;
             Swal.fire("Áp mã thành công !", "", "success");
@@ -1652,23 +1642,9 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
                           $scope.giamGia += (Price * (resp.data[i].voucher.discount * 0.01));
                           $scope.voucherGiamGia += (Price * (resp.data[i].voucher.discount * 0.01));
                         }
-
-
-
-
-
-
-
-
                       }
-
-
                     }
-
-
                   }
-
-
                   checkCode = {
                     code: code
                   }
@@ -2471,13 +2447,40 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
     });
   };
   $scope.$watch('tongTien', function () {
-    console.log($scope.tongTien)
     $http.get('http://localhost:8080/api/product/getAllVoucherByMinimun/' + $scope.tongTien).then(function (resp) {
-      console.log(resp.data);
       $scope.listVoucher = resp.data;
     })
+    $http.get('http://localhost:8080/api/voucher/getVoucherTop/' + $scope.tongTien).then(function (resp) {
+    $scope.voucher = resp.data
+    if ($scope.voucher.isVoucher === false) {
+      if ($scope.voucher.typeVoucher === false) {
+        if ($scope.voucher.cash > $scope.tongTien) {
+          $scope.giamGia += $scope.tongTien;
+          $scope.voucherGiamGia += $scope.tongTien;
+        }
+        else {
+          $scope.giamGia += $scope.voucher.cash;
+          $scope.voucherGiamGia += $scope.voucher.cash;
+        }
+      }
+      else {
+        $scope.giamGia += ($scope.tongTien * (resp.data.discount * 0.01));
+        $scope.voucherGiamGia += ($scope.tongTien * (resp.data.discount * 0.01));
+      }
+      $scope.voucherName = $scope.voucher.name
+      $scope.discountVoucher = $scope.voucher.discount + '%';
+      $scope.checkVoucher = true;
+      $scope.voucherIs = $scope.voucher.isVoucher;
+      $scope.voucherType = $scope.voucher.typeVoucher;
+      $scope.tienThanhToan = $scope.tongTien - $scope.giamGia;
+    }
+
+  
+  });
+  
   });
 
+  
   $scope.showAddKH = false;
   $scope.add = function () {
 
@@ -2490,7 +2493,7 @@ window.BanHangController = function ($scope, $http, $location, $routeParams, $ro
     //add image
     var MainImage = document.getElementById("fileUpload").files;
     if (MainImage.length == 0) {
-      Swal.fire('Vui lòng thêm ảnh đại diện cho sản phẩm !', '', 'error');
+      Swal.fire('Vui lòng thêm ảnh đại diện cho khách hàng !', '', 'error');
       return;
     }
 
